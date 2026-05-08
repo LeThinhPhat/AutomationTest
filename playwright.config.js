@@ -37,7 +37,8 @@ module.exports = defineConfig({
     screenshot: "only-on-failure",
 
     // record failure
-    video: "retain-on-failure",
+    // video: "retain-on-failure",
+    video: "off",
 
     // Timeout action (click, fill,...)
     actionTimeout: 10_000,
