@@ -29,8 +29,8 @@ class ProductDetailPage extends BasePage {
       this.addToCartBtn.click(),
     ]);
     const toast = this.page.locator("#toast-container");
-    // await toast.waitFor({ state: "visible", timeout: 10_000 });
-    // await toast.waitFor({ state: "hidden", timeout: 10_000 });
+    await toast.waitFor({ state: "visible", timeout: 10_000 });
+    await toast.waitFor({ state: "hidden", timeout: 10_000 });
   }
 }
 
