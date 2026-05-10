@@ -7,7 +7,9 @@ const { CHECKOUT } = require("../data/testData");
 const PRODUCT_NAME = "ZARA COAT 3";
 
 test.describe("Shopping Cart", () => {
-  test("Add product to cart from dashboard and verify it appears in cart", async ({ dashboardPage }) => {
+  test("Add product to cart from dashboard and verify it appears in cart", async ({
+    dashboardPage,
+  }) => {
     await dashboardPage.addToCartByName(PRODUCT_NAME);
     await dashboardPage.waitForToast();
 
@@ -18,7 +20,9 @@ test.describe("Shopping Cart", () => {
     expect(await cartPage.hasProduct(PRODUCT_NAME)).toBe(true);
   });
 
-  test("View product detail, add to cart, and verify product appears in cart", async ({ dashboardPage }) => {
+  test("View product detail, add to cart, and verify product appears in cart", async ({
+    dashboardPage,
+  }) => {
     await dashboardPage.waitForProducts();
     await dashboardPage.clickViewByName(PRODUCT_NAME);
 
@@ -35,7 +39,9 @@ test.describe("Shopping Cart", () => {
     expect(await cartPage.hasItemNumber()).toBe(true);
   });
 
-  test("Checkout product and fill shipping form with country autocomplete", async ({ dashboardPage }) => {
+  test("Checkout product and fill shipping form with country autocomplete", async ({
+    dashboardPage,
+  }) => {
     await dashboardPage.addToCartByName(PRODUCT_NAME);
     await dashboardPage.waitForToast();
 
@@ -52,10 +58,13 @@ test.describe("Shopping Cart", () => {
     await checkoutPage.fillCard(CHECKOUT.card);
     await checkoutPage.selectCountry(CHECKOUT.country);
 
-    expect(await checkoutPage.countryInput.inputValue()).toContain(CHECKOUT.expectedCountry);
+    expect(await checkoutPage.countryInput.inputValue()).toContain(
+      CHECKOUT.expectedCountry,
+    );
 
     await checkoutPage.placeOrder();
     const msg = await checkoutPage.getSuccessMessage();
     expect(msg.toLowerCase()).toContain("thankyou for the order.");
+    //
   });
 });
