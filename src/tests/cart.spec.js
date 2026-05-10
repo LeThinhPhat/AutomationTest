@@ -65,6 +65,5 @@ test.describe("Shopping Cart", () => {
     await checkoutPage.placeOrder();
     const msg = await checkoutPage.getSuccessMessage();
     expect(msg.toLowerCase()).toContain("thankyou for the order.");
-    //
   });
 });
