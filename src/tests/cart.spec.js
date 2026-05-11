@@ -39,25 +39,6 @@ test.describe("Shopping Cart", () => {
     expect(await cartPage.hasItemNumber()).toBe(true);
   });
 
-  test("View product detail flaky, add to cart, and verify product appears in cart", async ({
-    dashboardPage,
-  }) => {
-    await dashboardPage.waitForProducts();
-    await dashboardPage.clickViewByName(PRODUCT_NAME);
-
-    const productDetailPage = new ProductDetailPage(dashboardPage.page);
-    await productDetailPage.waitForPage();
-    expect(productDetailPage.getProductIdFromUrl()).toBeTruthy();
-
-    await productDetailPage.addToCart();
-    await dashboardPage.goToCart();
-
-    const cartPage = new CartPage(dashboardPage.page);
-    await cartPage.waitForCart();
-    expect(await cartPage.hasProduct(PRODUCT_NAME)).toBe(true);
-    expect(await cartPage.hasItemNumber()).toBe(true);
-  });
-
   test("Checkout product and fill shipping form with country autocomplete", async ({
     dashboardPage,
   }) => {
