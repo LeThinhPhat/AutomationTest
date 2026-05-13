@@ -43,7 +43,7 @@ async function clearCart(page) {
   while ((await deleteBtn.count()) > 0) {
     await Promise.all([
       page.waitForResponse(
-        (resp) => resp.url().includes("remove-from-cart") && resp.status() === 200,
+        (resp) => resp.url().includes("remove-from-cart") && resp.ok(),
         { timeout: 10_000 },
       ),
       deleteBtn.first().click({ force: true }),

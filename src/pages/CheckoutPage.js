@@ -4,10 +4,10 @@ class CheckoutPage extends BasePage {
   constructor(page) {
     super(page);
     this.emailInput         = page.locator(".payment__shipping .user__name input[type='text']");
-    this.cardInput          = page.locator("input.txt").first();
+    this.cardInput          = page.getByRole("textbox").first();
     this.countryInput       = page.getByPlaceholder("Select Country");
     this.countrySuggestions = page.locator("button.ta-item.list-group-item");
-    this.placeOrderBtn      = page.locator(".action__submit");
+    this.placeOrderBtn      = page.getByText("Place Order");
     this.successMessage     = page.getByRole("heading", { name: /thankyou for the order/i });
   }
 
@@ -25,18 +25,11 @@ class CheckoutPage extends BasePage {
 
   async selectCountry(countryText) {
     await this.countryInput.pressSequentially(countryText, { delay: 100 });
-    await this.countrySuggestions.first().waitFor({ state: "visible" });
-
-    const options = this.countrySuggestions;
-    const count = await options.count();
-    for (let i = 0; i < count; i++) {
-      const text = await options.nth(i).innerText();
-      if (text.trim().toLowerCase().includes(countryText.toLowerCase())) {
-        await options.nth(i).click();
-        return;
-      }
-    }
-    await options.first().click();
+    const match = this.countrySuggestions
+      .filter({ hasText: new RegExp(countryText, "i") })
+      .first();
+    await match.waitFor({ state: "visible" });
+    await match.click();
   }
 
   async placeOrder() {
