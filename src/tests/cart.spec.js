@@ -24,46 +24,71 @@ test.describe("Shopping Cart", () => {
     dashboardPage,
   }) => {
     await dashboardPage.waitForProducts();
+
+    // Step 1: Get product name from dashboard, then click View
+    const dashboardProductName =
+      await dashboardPage.getProductNameByName(PRODUCT_NAME);
     await dashboardPage.clickViewByName(PRODUCT_NAME);
 
+    // Step 2: Verify product detail page shows same name as on dashboard
     const productDetailPage = new ProductDetailPage(dashboardPage.page);
     await productDetailPage.waitForPage();
-    expect(productDetailPage.getProductIdFromUrl()).toBeTruthy();
+    const detailProductName = await productDetailPage.getProductName();
+    expect(detailProductName).toContain(dashboardProductName);
 
     await productDetailPage.addToCart();
-    await dashboardPage.goToCart();
+
+    // Step 3: Click cart icon in navbar
+    await productDetailPage.clickCartIcon();
 
     const cartPage = new CartPage(dashboardPage.page);
     await cartPage.waitForCart();
     expect(await cartPage.hasProduct(PRODUCT_NAME)).toBe(true);
-    expect(await cartPage.hasItemNumber()).toBe(true);
-  });
 
-  test("Checkout product and fill shipping form with country autocomplete", async ({
-    dashboardPage,
-  }) => {
-    await dashboardPage.addToCartByName(PRODUCT_NAME);
-    await dashboardPage.waitForToast();
-
-    await dashboardPage.goToCart();
-    const cartPage = new CartPage(dashboardPage.page);
-    await cartPage.waitForCart();
-    expect(await cartPage.hasProduct(PRODUCT_NAME)).toBe(true);
-
+    // Step 4: Checkout
+    const checkout = CHECKOUT[0];
     await cartPage.clickCheckout();
 
     const checkoutPage = new CheckoutPage(dashboardPage.page);
     await checkoutPage.waitForPage();
-    await checkoutPage.fillEmail(CHECKOUT.email);
-    await checkoutPage.fillCard(CHECKOUT.card);
-    await checkoutPage.selectCountry(CHECKOUT.country);
-
+    await checkoutPage.fillEmail(checkout.email);
+    await checkoutPage.fillCard(checkout.card);
+    await checkoutPage.selectCountry(checkout.country);
     expect(await checkoutPage.countryInput.inputValue()).toContain(
-      CHECKOUT.expectedCountry,
+      checkout.expectedCountry,
     );
-
     await checkoutPage.placeOrder();
     const msg = await checkoutPage.getSuccessMessage();
     expect(msg.toLowerCase()).toContain("thankyou for the order.");
   });
+
+  for (const checkout of CHECKOUT) {
+    test(`Checkout product with card ending ${checkout.card.slice(-4)} shipping to ${checkout.expectedCountry}`, async ({
+      dashboardPage,
+    }) => {
+      await dashboardPage.addToCartByName(PRODUCT_NAME);
+      await dashboardPage.waitForToast();
+
+      await dashboardPage.goToCart();
+      const cartPage = new CartPage(dashboardPage.page);
+      await cartPage.waitForCart();
+      expect(await cartPage.hasProduct(PRODUCT_NAME)).toBe(true);
+
+      await cartPage.clickCheckout();
+
+      const checkoutPage = new CheckoutPage(dashboardPage.page);
+      await checkoutPage.waitForPage();
+      await checkoutPage.fillEmail(checkout.email);
+      await checkoutPage.fillCard(checkout.card);
+      await checkoutPage.selectCountry(checkout.country);
+
+      expect(await checkoutPage.countryInput.inputValue()).toContain(
+        checkout.expectedCountry,
+      );
+
+      await checkoutPage.placeOrder();
+      const msg = await checkoutPage.getSuccessMessage();
+      expect(msg.toLowerCase()).toContain("thankyou for the order.");
+    });
+  }
 });

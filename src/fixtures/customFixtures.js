@@ -14,7 +14,7 @@ const test = base.extend({
     const loginPage = new LoginPage(page);
     await loginPage.goto();
 
-    // Register response listener BEFORE login so we don't miss the products request
+    // Listener phải đăng ký trước login để không miss response
     const productsLoaded = page.waitForResponse(
       (resp) =>
         resp.url().includes("/api/ecom/product/get-all-products") &&
@@ -22,17 +22,34 @@ const test = base.extend({
       { timeout: 20_000 }
     );
 
-    await loginPage.login(USERS.valid.email, USERS.valid.password);
-
-    // Ensure products API has responded before proceeding
+    await loginPage.login(USERS.valid[0].email, USERS.valid[0].password);
     await productsLoaded;
 
     const dashboardPage = new DashboardPage(page);
     await dashboardPage.waitForProducts();
-    // Wait for login toast to disappear so it doesn't interfere with subsequent toast checks
     await page.locator("#toast-container").waitFor({ state: "hidden", timeout: 10_000 });
+
     await use(dashboardPage);
+
+    // Teardown: xoá cart server-side sau mỗi test để tránh data leak sang test kế tiếp
+    await clearCart(page);
   },
 });
+
+async function clearCart(page) {
+  await page.goto("/client/#/dashboard/cart");
+  await page.waitForLoadState("networkidle");
+  const deleteBtn = page.locator(".cartSection button.btn-danger");
+  while ((await deleteBtn.count()) > 0) {
+    await Promise.all([
+      page.waitForResponse(
+        (resp) => resp.url().includes("remove-from-cart") && resp.status() === 200,
+        { timeout: 10_000 },
+      ),
+      deleteBtn.first().click({ force: true }),
+    ]);
+    await page.waitForLoadState("networkidle");
+  }
+}
 
 module.exports = { test, expect };

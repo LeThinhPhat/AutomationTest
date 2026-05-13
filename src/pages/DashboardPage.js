@@ -29,6 +29,11 @@ class DashboardPage extends BasePage {
     await card.getByRole("button", { name: "View" }).click();
   }
 
+  async getProductNameByName(productName) {
+    const card = await this.#findCard(productName);
+    return (await card.locator("h5").first().textContent())?.trim();
+  }
+
   async waitForToast() {
     await this.toastMessage.waitFor({ state: "visible" });
   }

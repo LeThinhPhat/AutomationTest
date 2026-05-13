@@ -4,9 +4,13 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:ui": "playwright test --ui",
-    "report": "playwright show-report reports/html"
+    "test:test": "set ENV=test&& playwright test",
+    "test:production": "set ENV=production&& playwright test",
+    "test:headed": "set ENV=test&& playwright test --headed",
+    "test:ui": "set ENV=test&& playwright test --ui",
+    "report:tester": "playwright show-report reports/tester",
+    "report:dev": "playwright show-report reports/dev",
+    "clean": "npx playwright clean && rmdir /s /q reports 2>nul || echo done"
   },
   "keywords": [],
   "author": "",

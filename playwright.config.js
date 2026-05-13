@@ -1,5 +1,9 @@
 // playwright.config.js
 const { defineConfig, devices } = require("@playwright/test");
+const { baseUrl } = require("./src/config/envConfig");
+
+const ENV = process.env.ENV || "test";
+const reportDir = ENV === "production" ? "reports/dev" : "reports/tester";
 
 module.exports = defineConfig({
   testDir: "./src/tests",
@@ -22,13 +26,13 @@ module.exports = defineConfig({
 
   // Reporter
   reporter: [
-    ["html", { outputFolder: "reports/html", open: "never" }],
+    ["html", { outputFolder: reportDir, open: "never" }],
     ["list"],
   ],
 
   use: {
-    // URL
-    baseURL: process.env.BASE_URL || "https://rahulshettyacademy.com",
+    // URL — resolved from ENV via src/config/envConfig.js
+    baseURL: baseUrl,
 
     // Trace failure
     trace: "on",
