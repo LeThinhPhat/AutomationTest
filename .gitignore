@@ -6,6 +6,7 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+reports/
 
 # Env files (chứa credentials — không commit)
 .env.test
