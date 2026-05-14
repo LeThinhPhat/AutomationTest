@@ -21,7 +21,13 @@ class DashboardPage extends BasePage {
 
   async addToCartByName(productName) {
     const card = await this.#findCard(productName);
-    await card.getByRole("button", { name: "Add To Cart" }).click();
+    await Promise.all([
+      this.page.waitForResponse(
+        (resp) => resp.url().includes("add-to-cart") && resp.ok(),
+        { timeout: 10_000 }
+      ),
+      card.getByRole("button", { name: "Add To Cart" }).click(),
+    ]);
   }
 
   async clickViewByName(productName) {
