@@ -3,7 +3,7 @@ const { BasePage } = require("./BasePage");
 class DashboardPage extends BasePage {
   constructor(page) {
     super(page);
-    this.productCards = page.locator(".row .mb-3");
+    this.productCards = page.locator("app-dashboard .card");
     this.toastMessage = page.locator("#toast-container");
     this.cartIcon     = page.locator("[routerlink='/dashboard/cart']");
   }

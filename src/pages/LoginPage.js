@@ -7,7 +7,7 @@ class LoginPage extends BasePage {
     this.passwordInput = page.locator("#userPassword");
     this.loginButton        = page.getByRole("button", { name: "Login" });
     this.errorToast         = page.locator("#toast-container");
-    this.validationMessages = page.locator(".invalid-feedback");
+    this.validationMessages = page.locator("app-login .invalid-feedback");
   }
 
   async goto() {
